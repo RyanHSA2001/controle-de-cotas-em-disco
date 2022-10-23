@@ -8,7 +8,7 @@ from tabulate import tabulate
 
 def leitura_do_arquivo(
 ):  # Lê o arquivo usuarios.txt e retorna um dataframe pandas.
-
+  
   df = pd.read_csv('usuarios.txt', sep='  ', header=None, engine='python')
 
   return df
@@ -56,41 +56,49 @@ def impressao(
    ACME Inc.             Uso do espaço em disco pelos usuários
    -----------------------------------------------------------
   \n"""
+      
+  try:
+    f = open('relatorio.txt', 'x')
+    f.write(header)
+    f.close
+  except:
+    print("Arquivo relatorio.txt já existe")
+    
+    return False
+  
 
-  f = open('relatorio.txt', 'x')
-  f.write(header)
-  f.close
-
-  relatorio = pd.DataFrame(
-    columns=['Nr.', ' Usuário', 'Espaço utilizado', '% do uso'])
+  relatorio = pd.DataFrame(columns=['Nr.', ' Usuário', 'Espaço utilizado', '% do uso'])
 
   quantidadeUsuarios = df[df.columns[0]].count()
 
-  usuarios  = []
-  for i in range(quantidadeUsuarios): # Ordena os usuários em odem descrescente
-    
+  usuarios = []
+  for i in range(
+      quantidadeUsuarios):  # Ordena os usuários em odem descrescente
+
     usuarios.append(df[1][i])
-    
+
   usuarios = sorted(usuarios)
   usuariosCrescente = usuarios.reverse()
 
   sum = 0
 
-  for i in range(quantidadeUsuarios):  # Soma o espaço utilizado pelos usuários.
+  for i in range(
+      quantidadeUsuarios):  # Soma o espaço utilizado pelos usuários.
     sum += df[1][i]
 
   espacoTotalOcupado = byte_para_megabyte(sum)
 
   for i in range(quantidadeUsuarios):  # Adiciona os dados ao relatório.
     for j in range(quantidadeUsuarios):
-        if byte_para_megabyte(usuarios[i]) == byte_para_megabyte(df[1][j]):
-          
-          relatorio.loc[i] = [
-            i + 1, df[0][j],
-            str(byte_para_megabyte(df[1][j])) + " MB",
-            str(percentual_de_uso(byte_para_megabyte(df[1][j]), espacoTotalOcupado))
-            + " %"
-          ]
+      if byte_para_megabyte(usuarios[i]) == byte_para_megabyte(df[1][j]):
+
+        relatorio.loc[i] = [
+          i + 1, df[0][j],
+          str(byte_para_megabyte(df[1][j])) + " MB",
+          str(
+            percentual_de_uso(byte_para_megabyte(df[1][j]),
+                              espacoTotalOcupado)) + " %"
+        ]
 
   relatorio = prefixar_espaços_nas_colunas(relatorio, 3)
 
