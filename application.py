@@ -68,6 +68,7 @@ def impressao(
   
 
   relatorio = pd.DataFrame(columns=['Nr.', ' Usuário', 'Espaço utilizado', '% do uso'])
+  dash = pd.DataFrame(columns=['Nr.', 'Usuário', 'Espaço Utilizado', '% do uso'])
 
   quantidadeUsuarios = df[df.columns[0]].count()
 
@@ -99,6 +100,8 @@ def impressao(
             percentual_de_uso(byte_para_megabyte(df[1][j]),
                               espacoTotalOcupado)) + " %"
         ]
+        dash.loc[i] = [i + 1, df[0][j], byte_para_megabyte(df[1][j]),
+                       percentual_de_uso(byte_para_megabyte(df[1][j]), espacoTotalOcupado)]
 
   relatorio = prefixar_espaços_nas_colunas(relatorio, 3)
 
@@ -122,3 +125,6 @@ def impressao(
   f = open('relatorio.txt', 'r')
   print(f.read())
   f.close
+
+  dash.to_csv('toDash.csv', index=False)
+
